@@ -1,14 +1,12 @@
 const express = require("express")
 const { MongoClient, ServerApiVersion, MongoDBNamespace } = require('mongodb');
 const mongodb = require('mongodb');
-console.log("the password is" ,process.argv);
 
-const uri = `mongodb+srv://testUser:${process.argv[2]}@my-first-cluster.fkvhj.mongodb.net/?retryWrites=true&w=majority`
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@my-first-cluster.fkvhj.mongodb.net/?retryWrites=true&w=majority`
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 let db, users;
 client.connect(err => {
-    console.log("error is", err )
     db = client.db("users")
     users = db.collection("users")
 });
@@ -26,17 +24,14 @@ app.use(function(req, res, next) {
 });
 
 app.post("/add-user", (req, res) => {
-    console.log("body is", JSON.stringify(req.body));
     users.insertOne(
         { first_name: req.body.namee,
         pincode : req.body.pincodee },
          (err, result) => {
              if (err) {
-                console.error(err)
                 res.status(500).json({ err: err })
                 return
             }
-            console.log(result)
             res.status(200).json(result.insertedId)
          }
     )
@@ -55,13 +50,8 @@ app.get("/showdetails", (req ,res) => {
     
 })
 
-app.delete('/:id',async (req, res) =>{
-
-    console.log(req.params.id);
-    
+app.delete('/:id',async (req, res) =>{    
     const result = await users.deleteOne({_id: new mongodb.ObjectId(req.params.id)});
-
-    //DELETE YOUR RECORD WITH YOUR PARAM.
     res.send(result);
 })
 
