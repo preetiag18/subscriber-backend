@@ -55,4 +55,4 @@ app.delete('/:id',async (req, res) =>{
     res.send(result);
 })
 
-app.listen(8080, () => console.log("Node Js Server ready"))
+app.listen(process.env.PORT || 8080, () => console.log("Node Js Server ready"))
